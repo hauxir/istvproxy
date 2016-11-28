@@ -1,0 +1,69 @@
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/hls.js/latest/hls.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pushy/1.0.0/css/pushy.css">
+</head>
+
+<body style="margin:0; overflow:hidden; background-color:#000">
+<nav class="pushy pushy-left">
+    <ul>
+    </ul>
+</nav>
+<div class="site-overlay"></div>
+
+<div id="container">
+    <div class="menu-btn">&#9776; Channels</div>
+    <video id="video" style="width:100%; height:100%"></video>
+</div>
+
+<script>
+var hls = new Hls();
+var video = document.getElementById('video');
+
+function set_channel(c) {
+  hls.destroy();
+  hls = new Hls();
+  hls.attachMedia(video);
+  hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+	hls.loadSource(c);
+  });
+  video.play();
+}
+
+if (Hls.isSupported()) {
+  $.get("/channels.json",function(cdata) {
+    $.each(cdata, function(k,v) {
+      var cbtn = $('<li class="pushy-link"><a href="#">' + k + '</a></li>');
+      cbtn.click(function() {
+          set_channel(v);
+          $("body").removeClass("pushy-open-left");
+      });
+      $(".pushy ul").append(cbtn);
+    });
+    $(".pushy-link").first().click();
+  });
+}
+</script>
+
+
+<style>
+.menu-btn{
+  width: 100px;
+  padding: 10px;
+  margin-bottom: 30px;
+  background: #000;
+  color: #FFF;
+  text-align: center;
+  cursor: pointer;
+  position:fixed;
+  z-index:99;
+}
+.menu-btn:hover{
+background: #00b4ff;
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pushy/1.0.0/js/pushy.min.js"></script>
+</body>
+</html>
