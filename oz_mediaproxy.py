@@ -122,10 +122,6 @@ if __name__ == "__main__":
             url, headers={"User-Agent": USER_AGENT}, stream=True)
         return Response(req.iter_content(chunk_size=10 * 1024), content_type=req.headers['content-type'])
 
-    @app.route('/playlist.m3u8')
-    def playlist():
-        return channel('stod2')
-
     @app.route('/c/<string:slug>.m3u8')
     def channel(slug):
         channel_id = client.channels[slug]
