@@ -50,7 +50,7 @@ class OZClient(object):
             }
         )
         now = datetime.datetime.now()
-        response = json.loads(request.content)
+        response = json.loads(request.content.decode('utf-8'))
         try:
             self.access_token = response['access_token']
             self.token_expires = now + \
@@ -66,7 +66,7 @@ class OZClient(object):
         request = requests.get(url,
                                headers=headers
                                )
-        return request.content
+        return request.content.decode('utf-8')
 
 
 if __name__ == "__main__":
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         streamUrl = json.loads(client.get(channel_url))[
             'data'][0]['streamUrl']['url']
         playlist = requests.get(
-            streamUrl, headers={"User-Agent": USER_AGENT}).content
+            streamUrl, headers={"User-Agent": USER_AGENT}).content.decode('utf-8')
         playlist = playlist.replace(
             "http://", "http://" + request.host + "/ch_pl/?url=http://")
         playlist = playlist.replace(
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     def channel_playlist():
         url = request.args.get('url')
         req = requests.get(url, headers={"User-Agent": USER_AGENT})
-        content = req.content
+        content = req.content.decode('utf-8')
         content = content.replace(
             "http://", "http://" + request.host + "/proxy/?url=http://")
         content = content.replace(
