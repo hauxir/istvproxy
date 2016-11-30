@@ -27,3 +27,4 @@ This server needs to be run on a computer with an Icelandic IP Address because o
 
 ##Screenshots:
 ![ruv](https://cloud.githubusercontent.com/assets/2439255/20775985/bb414582-b755-11e6-96cb-8fdc8218b2a4.PNG)
+![chanlist](https://cloud.githubusercontent.com/assets/2439255/20776010/dfc11432-b755-11e6-8967-03bbfeba6ef9.PNG)
