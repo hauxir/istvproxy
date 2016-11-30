@@ -23,7 +23,7 @@ This server needs to be run on a computer with an Icelandic IP Address because o
 
 * http://host:port/ Gives you a web HLS player with a channel selector
 
-* http://host:port//channels.json gives a JSON list of channel streams that can be used in other applications such as Kodi, Plex or Emby.
+* http://host:port/channels.json gives a JSON list of channel streams that can be used in other applications such as Kodi, Plex or Emby.
 
 ##Screenshots:
 ![ruv](https://cloud.githubusercontent.com/assets/2439255/20775985/bb414582-b755-11e6-96cb-8fdc8218b2a4.PNG)
