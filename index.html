@@ -32,16 +32,23 @@ function set_channel(c) {
 }
 
 if (Hls.isSupported()) {
-  $.get("/channels.json",function(cdata) {
-    $.each(cdata, function(k,v) {
-      var cbtn = $('<li class="pushy-link"><a href="#">' + k + '</a></li>');
-      cbtn.click(function() {
-          set_channel(v);
-          $("body").removeClass("pushy-open-left");
+  $.get("/channels.json",function(sources) {
+    $.each(sources, function(k,source) {
+      var sublist = $('<li><span>' + k + '</span><ul></ul></li>');
+      $.each(source, function(cname,curl) {
+        var cbtn = $('<li class="pushy-link"><a href="#">' + cname + '</a></li>');
+        cbtn.click(function() {
+          set_channel(curl);
+        });
+        $(sublist.find('ul')).append(cbtn);
       });
-      $(".pushy ul").append(cbtn);
+      $(".pushy > ul").append(sublist);
     });
     $(".pushy-link").first().click();
+    var script = document.createElement( 'script' );
+    script.type = 'text/javascript';
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pushy/1.0.0/js/pushy.min.js';
+    $("body").append(script);
   });
 }
 </script>
@@ -62,8 +69,14 @@ if (Hls.isSupported()) {
 .menu-btn:hover{
 background: #00b4ff;
 }
+.pushy ul {
+ list-style-type: none;
+ padding: 10px;
+}
+.pushy {
+  color: #FFF;
+}
 </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pushy/1.0.0/js/pushy.min.js"></script>
 </body>
 </html>
