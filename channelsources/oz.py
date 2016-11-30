@@ -32,14 +32,14 @@ class OZChannels(ChannelSource):
         request = requests.post(
             OZ_CORE_URL + '/oauth2/token',
             data={
-                "client_id": CLIENT_ID,
-                "client_secret": CLIENT_SECRET,
-                "grant_type": "password",
-                "username": self._username,
-                "password": self._password
+                'client_id': CLIENT_ID,
+                'client_secret': CLIENT_SECRET,
+                'grant_type': 'password',
+                'username': self._username,
+                'password': self._password
             },
             headers={
-                "User-Agent": USER_AGENT
+                'User-Agent': USER_AGENT
             }
         )
         now = datetime.datetime.now()
@@ -49,13 +49,13 @@ class OZChannels(ChannelSource):
             self._token_expires = now + \
                 datetime.timedelta(seconds=response['expires_in'] / 1000)
         except KeyError:
-            raise Exception("Invalid login credentials!")
+            raise Exception('Invalid login credentials!')
 
     def _get(self, url):
         if not self._access_token or self._token_expired():
             self._renew_token()
-        headers = {"Authorization": "Bearer " +
-                   self._access_token, "User-Agent": USER_AGENT}
+        headers = {'Authorization': 'Bearer ' +
+                   self._access_token, 'User-Agent': USER_AGENT}
         request = requests.get(url,
                                headers=headers
                                )
@@ -69,4 +69,4 @@ class OZChannels(ChannelSource):
         channel_url = CHANNEL_URL % c['id']
         streamUrl = json.loads(self._get(channel_url))[
             'data'][0]['streamUrl']['url']
-        return requests.get(streamUrl, headers={"User-Agent": USER_AGENT}).content
+        return requests.get(streamUrl, headers={'User-Agent': USER_AGENT}).content
