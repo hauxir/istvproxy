@@ -1,5 +1,8 @@
 # IS TV Proxy
 Proxy for Icelandic TV Streams that strips out geoblocking and authentication.
+##Requirements:
+* Python 2.7.x
+* Virtualenv
 
 ##Installation:
 ```bash
