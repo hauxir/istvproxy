@@ -69,9 +69,9 @@ if __name__ == '__main__':
         req = requests.get(url, headers={'User-Agent': USER_AGENT})
         playlist = req.content
         playlist = source.preprocess_video_playlist(playlist, channelslug)
-        content = playlist.replace(
+        playlist = playlist.replace(
             'http://', 'http://' + host + '/proxy/?url=http://')
-        content = playlist.replace(
+        playlist = playlist.replace(
             'https://', 'http://' + host + '/proxy/?url=https://')
         return Response(playlist, content_type='application/vnd.apple.mpegURL')
 
