@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ```
 ##Usage:
 ```bash
-python istvproxy.py --port <PORT>(optional, default=13377) --host <HOST>(optional) --ozusername <USERNAME>(optional) --ozpassword <PASSWORD>(optional)
+python istvproxy.py --port <PORT>(optional, default=13377) --host <HOST>(optional) --ozusername <USERNAME>(optional) --ozpassword <PASSWORD>(optional) --siminndeviceid <DEVICE_ID>(optional)
 ```
 
 HTTP server gets started at the chosen port. If the ozusername and ozpassword parameters are provided, it connects to Oz and adds the available channels for the user to the server. If not, only the RUV tv streams are added which don't require authentication.

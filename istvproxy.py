@@ -7,6 +7,7 @@ from flask_cors import CORS
 
 from channelsources.ruv import RUVChannels
 from channelsources.oz import OZChannels
+from channelsources.siminn import SiminnChannels
 from channelsources.channelsource import USER_AGENT
 
 if __name__ == '__main__':
@@ -15,11 +16,14 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=int, help='Port for the webserver')
     parser.add_argument('--ozusername', type=str, help='Username for OZ')
     parser.add_argument('--ozpassword', type=str, help='Password for OZ')
+    parser.add_argument('--siminndeviceid', type=str, help='Device ID for Siminn Sjonvarp')
     args = parser.parse_args()
     port = args.port or 13377
     sources = {'ruv': RUVChannels()}
     if args.ozusername and args.ozpassword:
         sources['oz'] = OZChannels(args.ozusername, args.ozpassword)
+    if args.siminndeviceid:
+        sources['siminn'] = SiminnChannels(args.siminndeviceid)
     app = Flask(__name__, template_folder='.')
     CORS(app)
 
@@ -79,7 +83,7 @@ if __name__ == '__main__':
     def proxy():
         url = request.args['url']
         req = requests.get(
-            url, headers={'User-Agent': USER_AGENT}, stream=True)
+            url, headers={'User-Agent': USER_AGENT}, stream=True, verify=False)
         return Response(req.iter_content(chunk_size=10 * 1024), content_type=req.headers['content-type'])
 
     app.run(host='0.0.0.0', port=port, threaded=True)
