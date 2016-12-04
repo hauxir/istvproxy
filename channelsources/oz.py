@@ -43,7 +43,7 @@ class OZChannels(ChannelSource):
             }
         )
         now = datetime.datetime.now()
-        response = json.loads(request.content)
+        response = request.json()
         try:
             self._access_token = response['access_token']
             self._token_expires = now + \
