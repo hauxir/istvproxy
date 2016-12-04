@@ -23,6 +23,13 @@ class SiminnChannels(ChannelSource):
         self._channels = {x['name']: x for x in json.loads(
             self._get(OREO_URL + "/" + channel_url))}
 
+    def _token_expired(self):
+        return (
+            not self._access_token or
+            not self._token_expires or
+            self._token_expires < datetime.datetime.now()
+        )
+
     def _renew_token(self):
         request = requests.post(
             OREO_URL + '/auth',
@@ -36,15 +43,15 @@ class SiminnChannels(ChannelSource):
             }
         )
         try:
+            now = datetime.datetime.now()
             self._access_token = request.headers['authorization']
+            self._token_expires = now + \
+                datetime.timedelta(minutes=5)
         except KeyError:
             raise Exception("Invalid device id")
 
-    def channels(self):
-        return self._channels.iterkeys()
-
     def _get(self, url):
-        if not self._access_token:
+        if not self._access_token or self._token_expired():
             self._renew_token()
         headers = {'Authorization': self._access_token,
                    'User-Agent': USER_AGENT}
@@ -57,6 +64,9 @@ class SiminnChannels(ChannelSource):
         ticket_url = OREO_URL + "/" + \
             self._channels[channelname]['links']['ticket']
         return json.loads(self._get(ticket_url))['ticket']
+
+    def channels(self):
+        return self._channels.iterkeys()
 
     def get_channel_playlist(self, name):
         ticket_url = self._ticket_url(name)
