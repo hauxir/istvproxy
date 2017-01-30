@@ -12,7 +12,7 @@ from channelsources.channelsource import USER_AGENT
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Proxy for OZ Live Channels.')
-    parser.add_argument('--host', type=int, help='Host for the webserver')
+    parser.add_argument('--host', type=str, help='Host for the webserver')
     parser.add_argument('--port', type=int, help='Port for the webserver')
     parser.add_argument('--ozusername', type=str, help='Username for OZ')
     parser.add_argument('--ozpassword', type=str, help='Password for OZ')
