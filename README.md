@@ -26,7 +26,8 @@ HTTP server gets started at the chosen port. If the ozusername and ozpassword pa
 Build and run the image.
 ```bash
 docker build -t istvproxy:latest .
-docker run -d -t -p 13377:13377 istproxy
+
+docker run -d -t -p 13377:13377 istvproxy
 ```
 
 If you need to run the service on other host or port the -p flag needs to be edited. 
