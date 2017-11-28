@@ -59,17 +59,19 @@ class OZChannels(ChannelSource):
         if not channel_json:
             channel_json = self._get_channel_json(channel)
         streamUrl = channel_json['data'][0]['streamUrl']
-        cookie_name, cookie_token, cookie_url = (streamUrl['cookieName'],
-                                                 streamUrl['token'],
-                                                 streamUrl['cookieUrl'])
-        cookie_response = requests.post(
-            cookie_url,
-            json=dict(name=str(cookie_name), value=str(cookie_token)),
-            headers={
-                'content-type': 'application/json'
-            })
-        self._cookies[channel] = dict(
-            key=cookie_name, value=cookie_response.cookies.get(cookie_name))
+        cookie_name, cookie_token, cookie_url = (streamUrl.get('cookieName'),
+                                                 streamUrl.get('token'),
+                                                 streamUrl.get('cookieUrl'))
+        if cookie_name and cookie_token and cookie_url:
+            cookie_response = requests.post(
+                cookie_url,
+                json=dict(name=str(cookie_name), value=str(cookie_token)),
+                headers={
+                    'content-type': 'application/json'
+                })
+            self._cookies[channel] = dict(
+                key=cookie_name,
+                value=cookie_response.cookies.get(cookie_name))
 
     def _get(self, url):
         if not self._access_token or self._token_expired():
@@ -98,5 +100,7 @@ class OZChannels(ChannelSource):
     def get_headers(self, channel):
         if not self._cookies.get(channel):
             self._renew_cookie(channel)
-        cookie = self._cookies[channel]
-        return {'Cookie': '{}={}'.format(cookie['key'], cookie['value'])}
+        if self._cookies.get(channel):
+            cookie = self._cookies[channel]
+            return {'Cookie': '{}={}'.format(cookie['key'], cookie['value'])}
+        return {}
