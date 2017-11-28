@@ -92,7 +92,7 @@ class OZChannels(ChannelSource):
             self._renew_cookie(name, channel_json=channel_json)
         streamUrl = channel_json['data'][0]['streamUrl']
         content = requests.get(
-            streamUrl['cdnUrl'], headers={
+            streamUrl.get('cdnUrl') or streamUrl.get('url'), headers={
                 'User-Agent': USER_AGENT
             }).content
         return content.replace("/live", OZ_PLAYLIST_URL + "/live")
