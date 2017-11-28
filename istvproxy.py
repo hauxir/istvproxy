@@ -84,6 +84,6 @@ if __name__ == '__main__':
         url = request.args['url']
         req = requests.get(
             url, headers={'User-Agent': USER_AGENT}, stream=True, verify=False)
-        return Response(req.iter_content(chunk_size=10 * 1024), content_type=req.headers['content-type'])
+        return Response(req.iter_content(chunk_size=10 * 1024), content_type=req.headers.get('content-type'))
 
     app.run(host='0.0.0.0', port=port, threaded=True)
