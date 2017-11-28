@@ -92,7 +92,6 @@ if __name__ == '__main__':
         source.get_headers(channelslug)
         headers = {'User-Agent': USER_AGENT}
         headers.update(source.get_headers(channelslug))
-        print headers
         url = request.args['url']
         req = requests.get(url, headers=headers, stream=True, verify=False)
         return Response(
