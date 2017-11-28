@@ -16,7 +16,8 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=int, help='Port for the webserver')
     parser.add_argument('--ozusername', type=str, help='Username for OZ')
     parser.add_argument('--ozpassword', type=str, help='Password for OZ')
-    parser.add_argument('--siminndeviceid', type=str, help='Device ID for Siminn Sjonvarp')
+    parser.add_argument(
+        '--siminndeviceid', type=str, help='Device ID for Siminn Sjonvarp')
     args = parser.parse_args()
     port = args.port or 13377
     sources = {'ruv': RUVChannels()}
@@ -50,7 +51,9 @@ if __name__ == '__main__':
             response_obj[sourceslug] = {}
             for channelslug in source.channels():
                 response_obj[sourceslug][
-                    channelslug] = 'http://%s/c/%s/%s.m3u8' % (host, sourceslug, channelslug)
+                    channelslug] = 'http://%s/c/%s/%s.m3u8' % (host,
+                                                               sourceslug,
+                                                               channelslug)
         return jsonify(**response_obj)
 
     @app.route('/c/<string:sourceslug>/<string:channelslug>.m3u8')
@@ -59,9 +62,11 @@ if __name__ == '__main__':
         source = sources[sourceslug]
         playlist = source.get_channel_playlist(channelslug)
         playlist = playlist.replace(
-            'http://', 'http://' + host + ('/v_pl/%s/?channel=' % sourceslug) + channelslug + '&url=http://')
-        playlist = playlist.replace(
-            'https://', 'http://' + host + ('/v_pl/%s/?channel=' % sourceslug) + channelslug + '&url=https://')
+            'http://', 'http://' + host +
+            ('/v_pl/%s/?channel=' % sourceslug) + channelslug + '&url=http://')
+        playlist = playlist.replace('https://', 'http://' + host +
+                                    ('/v_pl/%s/?channel=' % sourceslug) +
+                                    channelslug + '&url=https://')
         return Response(playlist, content_type='application/vnd.apple.mpegURL')
 
     @app.route('/v_pl/<string:sourceslug>/')
@@ -73,17 +78,25 @@ if __name__ == '__main__':
         req = requests.get(url, headers={'User-Agent': USER_AGENT})
         playlist = req.content
         playlist = source.preprocess_video_playlist(playlist, channelslug)
-        playlist = playlist.replace(
-            'http://', 'http://' + host + '/proxy/?url=http://')
-        playlist = playlist.replace(
-            'https://', 'http://' + host + '/proxy/?url=https://')
+        playlist = playlist.replace('http://',
+                                    'http://' + host + '/proxy/' + sourceslug +
+                                    '/' + channelslug + '/?url=http://')
+        playlist = playlist.replace('https://',
+                                    'http://' + host + '/proxy/' + sourceslug +
+                                    '/' + channelslug + '/?url=https://')
         return Response(playlist, content_type='application/vnd.apple.mpegURL')
 
-    @app.route('/proxy/')
-    def proxy():
+    @app.route('/proxy/<string:sourceslug>/<string:channelslug>/')
+    def proxy(sourceslug, channelslug):
+        source = sources[sourceslug]
+        source.get_headers(channelslug)
+        headers = {'User-Agent': USER_AGENT}
+        headers.update(source.get_headers(channelslug))
+        print headers
         url = request.args['url']
-        req = requests.get(
-            url, headers={'User-Agent': USER_AGENT}, stream=True, verify=False)
-        return Response(req.iter_content(chunk_size=10 * 1024), content_type=req.headers.get('content-type'))
+        req = requests.get(url, headers=headers, stream=True, verify=False)
+        return Response(
+            req.iter_content(chunk_size=10 * 1024),
+            content_type=req.headers.get('content-type'))
 
     app.run(host='0.0.0.0', port=port, threaded=True)

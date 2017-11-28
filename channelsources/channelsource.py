@@ -11,3 +11,6 @@ class ChannelSource(object):
 
     def channels(self):
         return []
+
+    def get_headers(self, channel):
+        return {}
