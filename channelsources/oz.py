@@ -8,6 +8,7 @@ from channelsource import ChannelSource, USER_AGENT
 CLIENT_SECRET = 'PHb7Aw7KZXGMYvgfEz'
 CLIENT_ID = 'ClubWebClient'
 OZ_CORE_URL = 'https://core.oz.com'
+OZ_PLAYLIST_URL = 'https://playlist.oz.com'
 CHANNELS_URL = OZ_CORE_URL + '/users/me/channels'
 CHANNEL_URL = OZ_CORE_URL + '/channels/%s/now?include=streamUrl,video,collection'
 
@@ -68,5 +69,6 @@ class OZChannels(ChannelSource):
         c = self._channels[name]
         channel_url = CHANNEL_URL % c['id']
         streamUrl = json.loads(self._get(channel_url))[
-            'data'][0]['streamUrl']['url']
-        return requests.get(streamUrl, headers={'User-Agent': USER_AGENT}).content
+            'data'][0]['streamUrl']['cdnUrl']
+        content = requests.get(streamUrl, headers={'User-Agent': USER_AGENT}).content
+        return content.replace("/live", OZ_PLAYLIST_URL + "/live")
