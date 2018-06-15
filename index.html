@@ -29,6 +29,7 @@ function set_channel(c) {
 	hls.loadSource(c);
   });
   video.play();
+  setTimeout(function() { video.play();  }, 1000);
 }
 
 if (Hls.isSupported()) {
@@ -50,6 +51,9 @@ if (Hls.isSupported()) {
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pushy/1.0.0/js/pushy.min.js';
     $("body").append(script);
   });
+}
+document.onclick = function() {
+    video.play(); 
 }
 </script>
 
