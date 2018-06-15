@@ -2,6 +2,7 @@
 import argparse
 
 import requests
+import urllib3
 from flask import Flask, Response, request, render_template, jsonify
 from flask_cors import CORS
 
@@ -11,6 +12,8 @@ from channelsources.siminn import SiminnChannels
 from channelsources.channelsource import USER_AGENT
 
 if __name__ == '__main__':
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     parser = argparse.ArgumentParser(description='Proxy for OZ Live Channels.')
     parser.add_argument('--host', type=str, help='Host for the webserver')
     parser.add_argument('--port', type=int, help='Port for the webserver')
