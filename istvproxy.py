@@ -3,13 +3,13 @@ import argparse
 
 import requests
 import urllib3
-from flask import Flask, Response, request, render_template, jsonify
+from flask import Flask, Response, jsonify, render_template, request
 from flask_cors import CORS
 
-from channelsources.ruv import RUVChannels
-from channelsources.oz import OZChannels
-from channelsources.siminn import SiminnChannels
 from channelsources.channelsource import USER_AGENT
+from channelsources.oz import OZChannels
+from channelsources.ruv import RUVChannels
+from channelsources.siminn import SiminnChannels
 
 if __name__ == '__main__':
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -62,12 +62,13 @@ if __name__ == '__main__':
     @app.route('/c/<string:sourceslug>/<string:channelslug>.m3u8')
     def channel(sourceslug, channelslug):
         host = args.host or request.host
+        protocol = "https://" if request.url.startswith('https://') else "http://"
         source = sources[sourceslug]
         playlist = source.get_channel_playlist(channelslug)
         playlist = playlist.replace(
-            'http://', 'http://' + host +
+            'http://', protocol + host +
             ('/v_pl/%s/?channel=' % sourceslug) + channelslug + '&url=http://')
-        playlist = playlist.replace('https://', 'http://' + host +
+        playlist = playlist.replace('https://', protocol + host +
                                     ('/v_pl/%s/?channel=' % sourceslug) +
                                     channelslug + '&url=https://')
         return Response(playlist, content_type='application/vnd.apple.mpegURL')
@@ -75,6 +76,7 @@ if __name__ == '__main__':
     @app.route('/v_pl/<string:sourceslug>/')
     def video_playlist(sourceslug):
         host = args.host or request.host
+        protocol = "https://" if request.url.startswith('https://') else "http://"
         source = sources[sourceslug]
         url = request.args['url']
         channelslug = request.args['channel']
@@ -82,10 +84,10 @@ if __name__ == '__main__':
         playlist = req.content
         playlist = source.preprocess_video_playlist(playlist, channelslug)
         playlist = playlist.replace('http://',
-                                    'http://' + host + '/proxy/' + sourceslug +
+                                    protocol + host + '/proxy/' + sourceslug +
                                     '/' + channelslug + '/?url=http://')
         playlist = playlist.replace('https://',
-                                    'http://' + host + '/proxy/' + sourceslug +
+                                    protocol + host + '/proxy/' + sourceslug +
                                     '/' + channelslug + '/?url=https://')
         return Response(playlist, content_type='application/vnd.apple.mpegURL')
 
