@@ -3,13 +3,13 @@ import argparse
 
 import requests
 import urllib3
-from flask import Flask, Response, jsonify, render_template, request
-from flask_cors import CORS
 
 from channelsources.channelsource import USER_AGENT
 from channelsources.oz import OZChannels
 from channelsources.ruv import RUVChannels
 from channelsources.siminn import SiminnChannels
+from flask import Flask, Response, jsonify, render_template, request
+from flask_cors import CORS
 
 if __name__ == '__main__':
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -49,12 +49,13 @@ if __name__ == '__main__':
     @app.route('/channels.json')
     def channels():
         host = args.host or request.host
+        protocol = "https://" if request.url.startswith('https://') else "http://"
         response_obj = {}
         for sourceslug, source in sources.iteritems():
             response_obj[sourceslug] = {}
             for channelslug in source.channels():
                 response_obj[sourceslug][
-                    channelslug] = 'http://%s/c/%s/%s.m3u8' % (host,
+                    channelslug] = protocol + '%s/c/%s/%s.m3u8' % (host,
                                                                sourceslug,
                                                                channelslug)
         return jsonify(**response_obj)
