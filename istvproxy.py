@@ -49,7 +49,8 @@ if __name__ == '__main__':
     @app.route('/channels.json')
     def channels():
         host = args.host or request.host
-        protocol = "https://" if request.url.startswith('https://') else "http://"
+        protocol = "https" if request.url.startswith('https://') else "http"
+        protocol = request.headers.get("X-Forwarded-Proto", protocol) + "://"
         response_obj = {}
         for sourceslug, source in sources.iteritems():
             response_obj[sourceslug] = {}
@@ -63,7 +64,8 @@ if __name__ == '__main__':
     @app.route('/c/<string:sourceslug>/<string:channelslug>.m3u8')
     def channel(sourceslug, channelslug):
         host = args.host or request.host
-        protocol = "https://" if request.url.startswith('https://') else "http://"
+        protocol = "https" if request.url.startswith('https://') else "http"
+        protocol = request.headers.get("X-Forwarded-Proto", protocol) + "://"
         source = sources[sourceslug]
         playlist = source.get_channel_playlist(channelslug)
         playlist = playlist.replace(
@@ -77,7 +79,8 @@ if __name__ == '__main__':
     @app.route('/v_pl/<string:sourceslug>/')
     def video_playlist(sourceslug):
         host = args.host or request.host
-        protocol = "https://" if request.url.startswith('https://') else "http://"
+        protocol = "https" if request.url.startswith('https://') else "http"
+        protocol = request.headers.get("X-Forwarded-Proto", protocol) + "://"
         source = sources[sourceslug]
         url = request.args['url']
         channelslug = request.args['channel']
