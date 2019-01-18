@@ -68,12 +68,12 @@ if __name__ == '__main__':
         protocol = request.headers.get("X-Forwarded-Proto", protocol) + "://"
         source = sources[sourceslug]
         playlist = source.get_channel_playlist(channelslug)
-        playlist = playlist.replace(
-            'http://', protocol + host +
-            ('/v_pl/%s/?channel=' % sourceslug) + channelslug + '&url=http://')
         playlist = playlist.replace('https://', protocol + host +
                                     ('/v_pl/%s/?channel=' % sourceslug) +
                                     channelslug + '&url=https://')
+        playlist = playlist.replace(
+            'http://', protocol + host +
+            ('/v_pl/%s/?channel=' % sourceslug) + channelslug + '&url=http://')
         return Response(playlist, content_type='application/vnd.apple.mpegURL')
 
     @app.route('/v_pl/<string:sourceslug>/')
@@ -87,12 +87,12 @@ if __name__ == '__main__':
         req = requests.get(url, headers={'User-Agent': USER_AGENT})
         playlist = req.content
         playlist = source.preprocess_video_playlist(playlist, channelslug)
-        playlist = playlist.replace('http://',
-                                    protocol + host + '/proxy/' + sourceslug +
-                                    '/' + channelslug + '/?url=http://')
         playlist = playlist.replace('https://',
                                     protocol + host + '/proxy/' + sourceslug +
                                     '/' + channelslug + '/?url=https://')
+        playlist = playlist.replace('http://',
+                                    protocol + host + '/proxy/' + sourceslug +
+                                    '/' + channelslug + '/?url=http://')
         return Response(playlist, content_type='application/vnd.apple.mpegURL')
 
     @app.route('/proxy/<string:sourceslug>/<string:channelslug>/')
