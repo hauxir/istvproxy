@@ -1,3 +1,4 @@
+import re
 import requests
 
 from channelsource import ChannelSource, USER_AGENT
@@ -12,17 +13,16 @@ class RUVChannels(ChannelSource):
         return ['ruv', 'ruv2']
 
     def get_channel_playlist(self, name):
-        json_response = requests.get(f"https://geo.spilari.ruv.is/channel/{name}").json()
+        json_response = requests.get("https://geo.spilari.ruv.is/channel/{}".format(name)).json()
         url = json_response["url"]
+        self.root_url = url.replace("index.m3u8", "")
         playlist = requests.get(
             url, headers={'User-Agent': USER_AGENT}).content
         playlist = playlist.replace(
-           'index', RUV_ROOT_URL + '/%s/index' % name
+           'index/', str(self.root_url) + str('index/')
         )
         return playlist
 
     def preprocess_video_playlist(self, playlist, channel):
-        playlist = playlist.replace(
-           'stream', RUV_ROOT_URL + '/%s/index/stream' % channel
-        )
+        playlist = re.sub(r'(stream.*\.(ts|vtt))', self.root_url + "/index/" + r'\1', playlist)
         return playlist
