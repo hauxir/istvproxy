@@ -21,8 +21,11 @@ class RUVChannels(ChannelSource):
         playlist = playlist.replace(
            'index/', str(self.root_url) + str('index/')
         )
+        playlist = re.sub(r'(\S+\.m3u8)', self.root_url + r"\1", playlist)
+        playlist = re.sub(r'URI="(\S+\.m3u8)"', 'URI="' + self.root_url + r'\1"', playlist)
         return playlist
 
     def preprocess_video_playlist(self, playlist, channel):
         playlist = re.sub(r'(stream.*\.(ts|vtt))', self.root_url + "/index/" + r'\1', playlist)
+        playlist = re.sub(r'(\S+\.ts)', self.root_url + r"\1", playlist)
         return playlist
